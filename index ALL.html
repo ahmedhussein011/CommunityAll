@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Community Written 2025</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: white;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 30px 20px;
+    }
+
+    h1 {
+      color: #000;
+      font-size: 30px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .question-box {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      border: 4px solid transparent;
+      background-clip: padding-box;
+      position: relative;
+      width: 90%;
+      max-width: 800px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 30px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(135deg, #FF512F, #DD2476);
+      color: white;
+      transition: transform 0.2s, box-shadow 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      min-width: 120px;
+      flex: 1;
+      max-width: 200px;
+    }
+
+    button.start {
+      background: linear-gradient(135deg, #28a745, #218838);
+    }
+
+    button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    button:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .signature {
+      font-size: 18px;
+      color: #222;
+      font-style: italic;
+      margin-top: 20px;
+    }
+
+    .progress-container {
+      width: 90%;
+      max-width: 800px;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      height: 20px;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      transition: width 0.3s ease-in-out;
+      box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+
+    .progress-text {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 0;
+      left: 0;
+      line-height: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+      margin-bottom: 20px;
+      width: 90%;
+      max-width: 400px;
+      font-size: 16px;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #4CAF50;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 1000;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .question-box {
+        font-size: 18px;
+        padding: 20px;
+      }
+
+      .button-group {
+        flex-direction: row;
+      }
+
+      button {
+        width: auto;
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Community Written 2025</h1>
+  
+  <select id="chapterSelect" onchange="filterQuestions()">
+    <option value="all">All Chapters</option>
+    <option value="1. Epidemiology">1. Basic</option>
+    <option value="3. Communicable Diseases">3. Epidemiology</option>
+    <option value="5. NCDs">5. NCDs</option>
+    <option value="6. Management">6. Management</option>
+    <option value="7. Medical Records">7. Medical Records</option>
+    <option value="8. Health System">8. Health System</option>
+    <option value="10. MCH">10. MCH</option>
+    <option value="12. Elderly">12. Elderly</option>
+    <option value="13. Occupational">13. Occupational</option>
+    <option value="14. Demography">14. Demography</option>
+    <option value="15. Population Policy">15. Population Policy</option>
+  </select>
+  
+  <div class="progress-container">
+    <div id="progressBar" class="progress-bar"></div>
+    <div id="progressText" class="progress-text">0%</div>
+  </div>
+  <div class="question-box" id="questionBox">Select a chapter and click Start!</div>
+  <div class="button-group">
+    <button class="start" id="startButton" onclick="showNextQuestion()">Start</button>
+    <button onclick="resetQuestions()">Reset</button>
+  </div>
+  <div class="signature">Developed by Ahmed Hussein</div>
+
+  <div id="notification" class="notification">All Questions Done ✅️</div>
+
+  <script>
+    const questions = [
+      // Chapter 1
+      { chapter: "1. Epidemiology", text: "The Spectrum of Health" },
+      { chapter: "1. Epidemiology", text: "DETERMINANTS OF HEALTH" },
+      { chapter: "1. Epidemiology", text: "Factors affecting the occurrence of a disease" },
+      { chapter: "1. Epidemiology", text: "Healthy lifestyle include?" },
+      { chapter: "1. Epidemiology", text: "Levels of prevention" },
+      { chapter: "1. Epidemiology", text: "Levels of curative care" },
+      { chapter: "1. Epidemiology", text: "LEVELS OF PRACTICE" },
+      { chapter: "1. Epidemiology", text: "Compare between clinical medicine and community medicine" },
+      { chapter: "1. Epidemiology", text: "Areas of concern to global health" },
+      { chapter: "1. Epidemiology", text: "The Sustainable development Goals for 2030" },
+       { chapter: "1. Epidemiology", text: "Dimensions of Health" },
+
+      // Chapter 3
+      { chapter: "3. Communicable Diseases", text: "Types of carriers" },
+      { chapter: "3. Communicable Diseases", text: "Indirect droplet infection" },
+      { chapter: "3. Communicable Diseases", text: "How organisms that find exit from cases and carriers reach food?" },
+      { chapter: "3. Communicable Diseases", text: "Injection Infection (Parenterally Transmitted Infection)" },
+      { chapter: "3. Communicable Diseases", text: "Vertical Infection" },
+      { chapter: "3. Communicable Diseases", text: "Application of Active Immunization" },
+      { chapter: "3. Communicable Diseases", text: "Limitations of Chemoprophylaxis" },
+      { chapter: "3. Communicable Diseases", text: "Definition & Types of Surveillance" },
+      { chapter: "3. Communicable Diseases", text: "Communicable Diseases under Surveillance prioritized through the following elements" },
+      { chapter: "3. Communicable Diseases", text: "Steps of an Outbreak Investigation" },
+      { chapter: "3. Communicable Diseases", text: "Today's top global health security risks" },
+      { chapter: "3. Communicable Diseases", text: "Reservoirs of HAIs" },
+      { chapter: "3. Communicable Diseases", text: "Prevention of HAIs" },
+      { chapter: "3. Communicable Diseases", text: "Measures for the Health Care Providers (HCP)" },
+      { chapter: "3. Communicable Diseases", text: "Standard Precautions include at least five items" },
+      { chapter: "3. Communicable Diseases", text: "Difference between Elimination & Eradication" },
+      { chapter: "3. Communicable Diseases", text: "Modes of transmission of Tetanus" },
+      { chapter: "3. Communicable Diseases", text: "Specific prevention of Tetanus" },
+      { chapter: "3. Communicable Diseases", text: "Modes of transmission of HIV" },
+      { chapter: "3. Communicable Diseases", text: "Clinical stages of HIV" },
+      { chapter: "3. Communicable Diseases", text: "Complications of HIV" },
+      { chapter: "3. Communicable Diseases", text: "General prevention of HIV" },
+      { chapter: "3. Communicable Diseases", text: "Modes of transmission of HBV" },
+      { chapter: "3. Communicable Diseases", text: "Specific prevention of HBV" },
+      { chapter: "3. Communicable Diseases", text: "Incubation period of Rabies affected by" },
+      { chapter: "3. Communicable Diseases", text: "What do you have to do if a dog bites an adult or a child in the street?" },
+      { chapter: "3. Communicable Diseases", text: "Specific prevention of Rabies" },
+      { chapter: "3. Communicable Diseases", text: "Specific prevention of Yellow fever" },
+      { chapter: "3. Communicable Diseases", text: "How is Egypt protected from Yellow Fever?" },
+      { chapter: "3. Communicable Diseases", text: "Elimination of lymphatic filariasis in Egypt" },
+      { chapter: "3. Communicable Diseases", text: "Difference between Endemic, Epidemic, Outbreak & Pandemic" },
+      { chapter: "3. Communicable Diseases", text: "Difference between Elimination & Eradication" },
+      { chapter: "3. Communicable Diseases", text: "Difference between Suspect, Probable, Epidemiologically linked, Laboratory confirmed, Confirmed Case" },
+      { chapter: "3. Communicable Diseases", text: "Def of Global Public Health" },
+      { chapter: "3. Communicable Diseases", text: "Def & Examples of Chemoprophylaxis" },
+
+      // Chapter 5
+      { chapter: "5. NCDs", text: "Reasons of the increasing prevalence of NCDs" },
+      { chapter: "5. NCDs", text: "Who is at risk of NCDs" },
+      { chapter: "5. NCDs", text: "Role of the PHC physician in prevention and control of NCDs" },
+      { chapter: "5. NCDs", text: "The causes of cancer" },
+      { chapter: "5. NCDs", text: "Management of Risk Factors and NCDs" },
+      { chapter: "5. NCDs", text: "NCD surveillance goals" },
+      { chapter: "5. NCDs", text: "Framework for national NCD surveillance" },
+      { chapter: "5. NCDs", text: "Difference between Communicable and NCDs" },
+      { chapter: "5. NCDs", text: "Quaternary prevention" },
+      { chapter: "5. NCDs", text: "General outlines for prevention of NCDs" },
+
+      // Chapter 6
+      { chapter: "6. Management", text: "PRINCIPLES OF MANAGEMENT" },
+      { chapter: "6. Management", text: "THE MANAGEMENT FUNCTIONS" },
+      { chapter: "6. Management", text: "Steps of Planning" },
+      { chapter: "6. Management", text: "Problem definition should cover" },
+      { chapter: "6. Management", text: "Priority Setting" },
+      { chapter: "6. Management", text: "The steps to be followed in strategic planning" },
+      { chapter: "6. Management", text: "Organization Situation Analysis: (SWOT/ SWOC)" },
+      { chapter: "6. Management", text: "The implementation function" },
+      { chapter: "6. Management", text: "Leadership skills" },
+      { chapter: "6. Management", text: "Comparison between managers and leaders" },
+      { chapter: "6. Management", text: "Types of indicators" },
+      { chapter: "6. Management", text: "Components of Health Economics" },
+      { chapter: "6. Management", text: "Dimensions of Quality in Health Care" },
+      { chapter: "6. Management", text: "Six important goals for patient safety" },
+      { chapter: "6. Management", text: "Difference between Accreditation & Auditing" },
+      { chapter: "6. Management", text: "Selected Population group covered by Health Insurance" },
+      { chapter: "6. Management", text: "Criteria for selecting appropriate solutions" },
+      { chapter: "6. Management", text: "Personal characteristics of effective leader" },
+      { chapter: "6. Management", text: "Three major methods of Financing Health care" },
+      { chapter: "6. Management", text: "Measures for cost containment" },
+      { chapter: "6. Management", text: "Prevention of performance errors" },
+
+      // Chapter 7
+      { chapter: "7. Medical Records", text: "Purpose of MEDICAL RECORDS" },
+      { chapter: "7. Medical Records", text: "Content of MEDICAL RECORDS" },
+      { chapter: "7. Medical Records", text: "Hospital Utilization include?" },
+
+      // Chapter 8
+      { chapter: "8. Health System", text: "Components of the Health System" },
+      { chapter: "8. Health System", text: "GAHAR work" },
+      { chapter: "8. Health System", text: "Services Covered by NUHIS" },
+      { chapter: "8. Health System", text: "Opportunities and Challenges in Digital Health" },
+      { chapter: "8. Health System", text: "The Health System in Egypt" },
+      { chapter: "8. Health System", text: "What's UHC" },
+      { chapter: "8. Health System", text: "Organizations of NUHIS" },
+      { chapter: "8. Health System", text: "Responsibilities of UHI organization" },
+      { chapter: "8. Health System", text: "Digital Health interventions as" },
+      { chapter: "8. Health System", text: "Digital Health interventions outcomes" },
+      { chapter: "8. Health System", text: "mHealth outcomes" },
+      { chapter: "8. Health System", text: "Domains of Digital Health" },
+
+      // Chapter 10
+      { chapter: "10. MCH", text: "Special care for mothers and children is prioritized due to" },
+      { chapter: "10. MCH", text: "Maternal Morbidity Causes" },
+      { chapter: "10. MCH", text: "Causes of Maternal Mortality" },
+      { chapter: "10. MCH", text: "Factors Contributing to Maternal Mortality" },
+      { chapter: "10. MCH", text: "Measures to Reduce Maternal Mortality and Improve the Outcome of Pregnancy" },
+      { chapter: "10. MCH", text: "Components of PREMARITAL CARE" },
+      { chapter: "10. MCH", text: "Objectives of ANTENATAL CARE" },
+      { chapter: "10. MCH", text: "Components of ANC" },
+      { chapter: "10. MCH", text: "The main items of health education in ANC" },
+      { chapter: "10. MCH", text: "Components of NATAL Care" },
+      { chapter: "10. MCH", text: "Objectives of POSTNATAL CARE" },
+      { chapter: "10. MCH", text: "Components of POSTNATAL CARE" },
+      { chapter: "10. MCH", text: "Objectives of INTER-PREGNANCY CARE" },
+      { chapter: "10. MCH", text: "Components of INTER-PREGNANCY CARE" },
+      { chapter: "10. MCH", text: "Reproductive health def" },
+      { chapter: "10. MCH", text: "Contributing factors related to the Under- Five health problems" },
+      { chapter: "10. MCH", text: "Neonatal Morbidities" },
+      { chapter: "10. MCH", text: "Post-neonatal and child health Morbidities" },
+      { chapter: "10. MCH", text: "Predisposing factors of PRE-TERM" },
+      { chapter: "10. MCH", text: "Causes of congenital abnormalities" },
+      { chapter: "10. MCH", text: "Prevention of congenital abnormalities" },
+      { chapter: "10. MCH", text: "Prevention of Tetanus Neonatorum" },
+      { chapter: "10. MCH", text: "Prevention of Omphalitis" },
+      { chapter: "10. MCH", text: "Components of Child Health Program" },
+      { chapter: "10. MCH", text: "Health Education (the important messages) of Child Health Program" },
+      { chapter: "10. MCH", text: "Nutrition Care of Child Health Program" },
+      { chapter: "10. MCH", text: "EVALUATION OF THE MCH PROGRAM" },
+      { chapter: "10. MCH", text: "Components of Reproductive health" },
+      { chapter: "10. MCH", text: "Objective of MCH" },
+      { chapter: "10. MCH", text: "Def of Maternal Mortality" },
+      { chapter: "10. MCH", text: "Pregnancy Wastage" },
+      { chapter: "10. MCH", text: "Def of Woman's Health" },
+      { chapter: "10. MCH", text: "Neonatal Mortality" },
+      { chapter: "10. MCH", text: "Post Neonatal & Child Mortality" },
+      { chapter: "10. MCH", text: "Hazards of preterm" },
+      { chapter: "10. MCH", text: "Prevention of preterm" },
+      { chapter: "10. MCH", text: "Care of preterm" },
+      { chapter: "10. MCH", text: "Prevention of Ophthalmia Neonatorum" },
+      { chapter: "10. MCH", text: "Prevention & Control of Diarrhea" },
+      { chapter: "10. MCH", text: "Prevention & Control of ARI" },
+      { chapter: "10. MCH", text: "Integrated Management of Childhood Illness (IMCI)" },
+
+      // Chapter 12
+      { chapter: "12. Elderly", text: "Population aging is due to the epidemiologic and demographic transitions" },
+      { chapter: "12. Elderly", text: "Health problems of the elderly" },
+      { chapter: "12. Elderly", text: "Objectives of the elderly health care program" },
+      { chapter: "12. Elderly", text: "Health Promotion and primary prevention services for elderly" },
+      { chapter: "12. Elderly", text: "The elderly health care program services" },
+
+      // Chapter 13
+      { chapter: "13. Occupational", text: "Types of Heat occupational injury" },
+      { chapter: "13. Occupational", text: "Prevention of Heat occupational injury" },
+      { chapter: "13. Occupational", text: "Harmful health effects of High Pressure" },
+      { chapter: "13. Occupational", text: "Factors of Harmful health effects of Noise" },
+      { chapter: "13. Occupational", text: "Prevention of Noise" },
+      { chapter: "13. Occupational", text: "Risky Jobs of UV" },
+      { chapter: "13. Occupational", text: "Harmful health effects of UV" },
+      { chapter: "13. Occupational", text: "Prevention of UV" },
+      { chapter: "13. Occupational", text: "Risky Jobs of Infrared" },
+      { chapter: "13. Occupational", text: "Harmful health effects of Infrared" },
+      { chapter: "13. Occupational", text: "Prevention of Infrared" },
+      { chapter: "13. Occupational", text: "Prevention of Ionizing" },
+      { chapter: "13. Occupational", text: "Factors influencing lung reaction to dust" },
+      { chapter: "13. Occupational", text: "Prevention of Pneumoconiosis" },
+      { chapter: "13. Occupational", text: "Prevention of Metal Poisoning" },
+      { chapter: "13. Occupational", text: "Gases are classified according to the way of action into" },
+      { chapter: "13. Occupational", text: "Measures for the workers regarding Health promotion and primary prevention" },
+      { chapter: "13. Occupational", text: "Objectives of Pre employment Examination" },
+      { chapter: "13. Occupational", text: "Components of Pre employment Examination" },
+      { chapter: "13. Occupational", text: "Compare between heat exhaustion & sun stroke" },
+      { chapter: "13. Occupational", text: "Types of physical injuries" },
+      { chapter: "13. Occupational", text: "Harmful effect of noise" },
+      { chapter: "13. Occupational", text: "Harmful effect of Ionizing" },
+      { chapter: "13. Occupational", text: "Types of dust injuries" },
+      { chapter: "13. Occupational", text: "Occupational related" },
+      { chapter: "13. Occupational", text: "Measures for work place environment" },
+      { chapter: "13. Occupational", text: "Periodic examination" },
+
+      // Chapter 14
+      { chapter: "14. Demography", text: "POPULATION CENSUS (Process & Value)" },
+      { chapter: "14. Demography", text: "Methods of Estimation of the Population" },
+      { chapter: "14. Demography", text: "Three components of Population change" },
+      { chapter: "14. Demography", text: "Population changes are measures by" },
+      { chapter: "14. Demography", text: "Stages of demographic transition" },
+      { chapter: "14. Demography", text: "Population Structure is concerned with" },
+      { chapter: "14. Demography", text: "Population pyramid (Def & Characters)" },
+      { chapter: "14. Demography", text: "Profile of the different Population Pyramids" },
+      { chapter: "14. Demography", text: "Refugee have encountered many problems" },
+      { chapter: "14. Demography", text: "Life expectancy" },
+      { chapter: "14. Demography", text: "Egypt population trends" },
+      { chapter: "14. Demography", text: "Role of PHC with refugees" },
+      { chapter: "14. Demography", text: "Barriers to refugee" },
+
+      // Chapter 15
+      { chapter: "15. Population Policy", text: "Objectives of the National Population Policy" },
+      { chapter: "15. Population Policy", text: "Strategies to achieve the objectives of the National Population Policy" },
+      { chapter: "15. Population Policy", text: "Factors Affecting Fertility" },
+      { chapter: "15. Population Policy", text: "Motives for High Fertility" },
+      { chapter: "15. Population Policy", text: "Motives for Low Fertility" },
+      { chapter: "15. Population Policy", text: "Objectives of the Family Planning Program" },
+      { chapter: "15. Population Policy", text: "Components of FP Services at the PHC facility level" },
+      { chapter: "15. Population Policy", text: "Impact Indicators of FP" },
+      { chapter: "15. Population Policy", text: "Priority group for FP program" },
+      { chapter: "15. Population Policy", text: "Objectives & axes of the program Two is enough" },
+      { chapter: "15. Population Policy", text: "Outcome Indicators of FP" }
+    ];
+
+    let shuffled = [];
+    let index = 0;
+    const startButton = document.getElementById('startButton');
+    const notification = document.getElementById('notification');
+
+    // Save progress to localStorage
+    function saveProgress() {
+      localStorage.setItem('shuffledQuestions', JSON.stringify(shuffled));
+      localStorage.setItem('currentIndex', index);
+      localStorage.setItem('selectedChapter', document.getElementById('chapterSelect').value);
+    }
+
+    // Load progress from localStorage
+    function loadProgress() {
+      const savedQuestions = localStorage.getItem('shuffledQuestions');
+      const savedIndex = localStorage.getItem('currentIndex');
+      const savedChapter = localStorage.getItem('selectedChapter');
+      
+      if (savedChapter) {
+        document.getElementById('chapterSelect').value = savedChapter;
+      }
+      
+      if (savedQuestions && savedIndex) {
+        shuffled = JSON.parse(savedQuestions);
+        index = parseInt(savedIndex);
+        document.getElementById("questionBox").textContent = 
+          index > 0 ? shuffled[index - 1].text : "Select a chapter and click Start!";
+        if (index >= shuffled.length && shuffled.length > 0) {
+          showCompletion();
+        }
+      } else {
+        filterQuestions();
+      }
+    }
+
+    function filterQuestions() {
+      const selectedChapter = document.getElementById('chapterSelect').value;
+      
+      if (selectedChapter === "all") {
+        shuffled = [...questions];
+      } else {
+        shuffled = questions.filter(q => q.chapter === selectedChapter);
+      }
+      
+      resetQuestions();
+      saveProgress();
+    }
+
+    function shuffleQuestions() {
+      // Shuffle the current filtered questions
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      index = 0;
+      startButton.disabled = false;
+    }
+
+    function showCompletion() {
+      // Show notification
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+      
+      // Disable start button
+      startButton.disabled = true;
+      
+      // Show message in question box
+      document.getElementById("questionBox").textContent = "All Questions Done ✅️, Click Reset to start again";
+    }
+
+    function showNextQuestion() {
+      if (index === 0 && shuffled.length === 0) filterQuestions();
+      
+      if (index < shuffled.length) {
+        document.getElementById("questionBox").textContent = shuffled[index].text;
+        index++;
+      } else {
+        showCompletion();
+        return;
+      }
+      updateProgress();
+      saveProgress();
+    }
+
+    function resetQuestions() {
+      shuffleQuestions();
+      document.getElementById("questionBox").textContent = shuffled.length > 0 ? 
+        "Ready! Click Start to begin!" : "No questions in this chapter";
+      index = 0;
+      updateProgress();
+      saveProgress();
+    }
+
+    function updateProgress() {
+      const progress = shuffled.length > 0 ? (index / shuffled.length) * 100 : 0;
+      document.getElementById("progressBar").style.width = progress + "%";
+      document.getElementById("progressText").textContent = Math.round(progress) + "%";
+    }
+
+    // Initialize on load
+    loadProgress();
+    updateProgress();
+  </script>
+</body>
+</html>
